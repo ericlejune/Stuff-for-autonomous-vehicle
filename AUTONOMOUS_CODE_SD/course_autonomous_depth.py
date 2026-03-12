@@ -162,6 +162,15 @@ class HailoInference:
         buf = sample.get_buffer()
         roi = hailo.get_roi_from_buffer(buf)
         dets = roi.get_objects_typed(hailo.HAILO_DETECTION)
+        
+        # --- DEBUG PRINT ADDED HERE ---
+        for d in dets:
+            lbl = d.get_label()
+            # If the label is empty or not in your expected list, print its secret ID!
+            if not lbl or lbl not in EXPECTED_LABELS:
+                print(f"\n[DEBUG] Mystery Object Detected! Raw Label: '{lbl}' | Class ID: {d.get_class_id()}\n")
+        # ------------------------------
+
         results = [(d.get_label(), d.get_confidence(), d.get_bbox()) for d in dets]
         if self.detection_queue.full():
             try:
